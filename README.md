@@ -15,7 +15,7 @@ Output formats:
 
 #Steps - How to use it
 
-1. Create a docx with some default formatting (like headings, captions)
+1. Create a docx/odt with some default formatting (like headings, captions)
 2. Convert to Nessus/Burp/Acunetix to markdown with EHScriptor
 3. Manually edit the results (if needed)
 4. Add findings like the converted ones
