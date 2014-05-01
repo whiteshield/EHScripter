@@ -1,5 +1,4 @@
 #EHScriptor
-==========
 
 Ethical Hacking Scripter - GUI converter and docx/odt generator for ethical hacking.
 
@@ -15,7 +14,6 @@ Output formats:
 
 
 #Steps - How to use it
-======================
 
 1. Create a docx with some default formatting (like headings, captions)
 2. Convert to Nessus/Burp/Acunetix to markdown with EHScriptor
@@ -24,11 +22,10 @@ Output formats:
 5. Convert to docx or odt with EHScriptor
 6. Open result in office and click through the errors ;)
 7. Run the macro (copy it from GUI)
-8. Adjust the styles (numnering of headings and "Source Code" style)
+8. Adjust the styles (numbering of "Headings" and "Source Code" style)
 9. Done!
 
 #Screenshots
-============
 
 ![GUI](screenshots/gui.png)
 
@@ -36,12 +33,10 @@ Output formats:
 
 
 #ChangeLog
-==========
 
 - v0.1 - Initial release
 
 #Requirements
-=============
 
 ##Linux packages:
 
@@ -66,7 +61,6 @@ Output formats:
     pip3 install html2text
 
 #License
-========
 
 GNU GPL V2
 
