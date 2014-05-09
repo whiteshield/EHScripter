@@ -40,6 +40,8 @@ class NessusToMarkdown:
                     pluginFamily=reportitem.get('pluginFamily', 'N/A')
                     solution=self.value(reportitem.xpath('./solution//text()'),'N/A')
                     risk_factor=self.value(reportitem.xpath('./risk_factor//text()'),'N/A')
+                    if risk_factor=='None':
+                        rick_factor='Info'
                     description=self.value(reportitem.xpath('./description//text()'),'N/A')
                     plugin_output=self.value(reportitem.xpath('./plugin_output//text()'),'N/A')
                     if pluginFamily != 'Settings' and pluginName != '':
