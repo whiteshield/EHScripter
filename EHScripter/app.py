@@ -224,7 +224,7 @@ class EHScripterApplication(Frame):
         self.frameNessus = Frame(self.notebook, padding="10 10 10 10")
         Label(self.frameNessus, text="Input file:").grid(column=1, row=1, sticky=(E))
         Label(self.frameNessus, text="Template:").grid(column=1, row=2, sticky=(E))
-        Label(self.frameNessus, text="name, port, svc_name, protocol, pluginName, pluginFamily, solution, risk_factor, description, plugin_output, findinglist", wraplength=300).grid(column=5, row=2, sticky=(N, W))
+        Label(self.frameNessus, text="name, port, svc_name, protocol, pluginName, pluginFamily, solution, risk_factor, description, plugin_output, cvss_base_score, cvss_vector, findinglist", wraplength=300).grid(column=5, row=2, sticky=(N, W))
         Label(self.frameNessus, text="Merge:").grid(column=1, row=3, sticky=(E))
         Label(self.frameNessus, text="Merge Template:").grid(column=1, row=4, sticky=(E))
         Label(self.frameNessus, text="Merge Items:").grid(column=4, row=4, sticky=(E))

@@ -40,12 +40,16 @@ class NessusToMarkdown:
                     pluginFamily=reportitem.get('pluginFamily', 'N/A')
                     solution=self.value(reportitem.xpath('./solution//text()'),'N/A')
                     risk_factor=self.value(reportitem.xpath('./risk_factor//text()'),'N/A')
+                    cvss_base_score=self.value(reportitem.xpath('./cvss_base_score//text()'),'N/A')
+                    cvss_vector=self.value(reportitem.xpath('./cvss_vector//text()'),'N/A')
+                    if risk_factor!='N/A':
+                        risk_factor=risk_factor.title()
                     if risk_factor=='None':
                         risk_factor='Info'
                     description=self.value(reportitem.xpath('./description//text()'),'N/A')
                     plugin_output=self.value(reportitem.xpath('./plugin_output//text()'),'N/A')
                     if pluginFamily != 'Settings' and pluginName != '':
-                        d={'name':name, 'port':port, 'svc_name':svc_name, 'protocol':protocol, 'pluginName':pluginName, 'pluginFamily':pluginFamily, 'solution': solution, 'risk_factor': risk_factor, 'description': description, 'plugin_output': plugin_output, 'findinglist':''}
+                        d={'name':name, 'port':port, 'svc_name':svc_name, 'protocol':protocol, 'pluginName':pluginName, 'pluginFamily':pluginFamily, 'solution': solution, 'risk_factor': risk_factor, 'description': description, 'plugin_output': plugin_output, 'findinglist':'', 'cvss_base_score':cvss_base_score, 'cvss_vector':cvss_vector}
                         if not self.options['merge']:
                             dirname=slugify('%s-%s-%s-%04d-nessus'%(risk_factor, pluginName, name, counter))
                             if not os.path.exists(self.options['output_dir']+'/'+dirname):

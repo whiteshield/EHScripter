@@ -1,6 +1,6 @@
 #EHScripter
 
-Ethical Hacking Scripter - GUI converter and docx/odt generator for ethical hacking.
+Ethical Hacking Scripter - Python3 GUI converter and docx/odt generator for ethical hacking.
 
 Input formats:
 - Nessus 
@@ -34,6 +34,8 @@ Output formats:
 
 #ChangeLog
 
+- v0.3 - Nessus CVSS score and vector, all type of risk factor to title case, KALI setup instruction in README.md
+
 - v0.2 - Nessus "None" risk factor to "Info", rename to EHScripter
 
 - v0.1 - Initial release
@@ -42,25 +44,24 @@ Output formats:
 
 ##Linux packages:
 
-    sudo apt-get install python3
-    sudo apt-get install python3-easygui
-    sudo apt-get install python3-yaml
-    sudo apt-get install python3-setuptools
-    sudo apt-get install libyaml-dev
-    sudo apt-get install python3-dev
-    sudo apt-get install libffi-dev
-    sudo apt-get install pandoc
+    sudo apt-get install python3 python3-tk python3-yaml python3-setuptools libyaml-dev python3-dev libffi-dev pandoc libxslt-dev libxml2-dev
+
+###KALI users need to upgrade pandoc manually:
+
+    apt-get remove pandoc
+    apt-get install haskell-platform texlive
+    cabal update
+    cabal install pandoc
+
+Add .cabal/bin dir to your path:
+    
+    PATH="$HOME/.cabal/bin:$PATH"
+
 
 ##Python3 packages:
 
     easy_install3 pip
-    pip3 install pyyaml
-    pip3 install lxml
-    pip3 install pygal
-    pip3 install cairosvg
-    pip3 install cssselect
-    pip3 install tinycss
-    pip3 install html2text
+    pip3 install pyyaml lxml pygal cairosvg cssselect tinycss html2text
 
 #License
 

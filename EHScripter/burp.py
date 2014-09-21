@@ -38,9 +38,10 @@ class BurpToMarkdown:
             path=self.value(issue.xpath('./path//text()'),'N/A')
             location=self.value(issue.xpath('./location//text()'),'N/A')
             severity=self.value(issue.xpath('./severity//text()'),'N/A')
+            if severity!='N/A':
+                severity=severity.title()
             if severity == 'Information':
                 severity = 'Info'
-
             confidence=self.value(issue.xpath('./confidence//text()'),'N/A')
             issueBackground=self.value(issue.xpath('./issueBackground//text()'),'N/A')
             remediationBackground=self.value(issue.xpath('./remediationBackground//text()'),'N/A')

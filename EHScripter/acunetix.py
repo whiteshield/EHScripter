@@ -41,6 +41,8 @@ class AcunetixToMarkdown:
             AOP_Additional=self.value(reportitem.xpath('./AOP_Additional//text()'),'N/A')
             IsFalsePositive=self.value(reportitem.xpath('./IsFalsePositive//text()'),'N/A')
             Severity=self.value(reportitem.xpath('./Severity//text()'),'N/A')
+            if Severity!='N/A':
+                Severity=Severity.title()
             Type=self.value(reportitem.xpath('./Type//text()'),'N/A')
             Impact=self.value(reportitem.xpath('./Impact//text()'),'N/A')
             Description=self.value(reportitem.xpath('./Description//text()'),'N/A')
