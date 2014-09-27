@@ -46,7 +46,7 @@ class GenerateDoc:
                 result=separator.get('re').match(chars)
                 if result:
                     resultdict=result.group()
-                    if separator.get('name') in named: 
+                    if separator.get('name') in named:
                         pieces.append({'name': separator.get('name'), 'start':position, 'end':len(findingtext), 'text':result.group(1)})
                     else:
                         pieces.append({'name': separator.get('name'), 'start': position+len(result.group()), 'end':len(findingtext), 'text':False})
@@ -113,10 +113,10 @@ class GenerateDoc:
             t = '\n\n##%s##\n\n'%self.options['txt_matrix']
 
             t+= '\n| %s |'%self.options['txt_category'].ljust(strlen)
-            
+
             for r in risks :
                 t+= ' %s |'%r.ljust(strlen)
-                
+
 
             t+= '\n| %s |'%('-'*strlen)
             for r in risks :
@@ -129,7 +129,7 @@ class GenerateDoc:
                 row=matrix[key]
                 sumr=0
                 c=0
-                xt = ''        
+                xt = ''
                 for r in risks:
                     xt+= ' %s |'%str('' if row[r]==0 else row[r]).ljust(strlen)
                     if c==0:
@@ -181,7 +181,7 @@ class GenerateDoc:
             pie_chart.add(self.options['txt_risk_short_medium'], len(vulns['medium']))
             pie_chart.add(self.options['txt_risk_short_low'], len(vulns['low']))
             pie_chart.add(self.options['txt_risk_short_info'], len(vulns['info']))
-            
+
             pie_chart.render_to_png(self.options["load_dir"]+'/pie_chart.png')
 
 
@@ -197,13 +197,13 @@ class GenerateDoc:
             t+='| %s | %s |\n'%(self.options['txt_risk_short_low'].ljust(strlen), str(len(vulns['low'])).ljust(strlen))
             t+='| %s | %s |\n'%(self.options['txt_risk_short_info'].ljust(strlen), str(len(vulns['info'])).ljust(strlen))
             t+='\n\n-\n\n'
-        scritical = sorted(vulns['critical'], key=lambda k: k['d']) 
-        shigh = sorted(vulns['high'], key=lambda k: k['d']) 
-        smedium = sorted(vulns['medium'], key=lambda k: k['d']) 
-        slow = sorted(vulns['low'], key=lambda k: k['d']) 
-        sinfo = sorted(vulns['info'], key=lambda k: k['d']) 
+        scritical = sorted(vulns['critical'], key=lambda k: k['d'])
+        shigh = sorted(vulns['high'], key=lambda k: k['d'])
+        smedium = sorted(vulns['medium'], key=lambda k: k['d'])
+        slow = sorted(vulns['low'], key=lambda k: k['d'])
+        sinfo = sorted(vulns['info'], key=lambda k: k['d'])
         fileList = ''
-        
+
 
         if len(scritical)>0:
             t+='\n%s\n\n'%self.options['txt_risk_critical']
@@ -273,7 +273,7 @@ class GenerateDoc:
         except Exception as e:
             print('itt egy exception')
             print(e)
-        
+
         t=text
 
         piccounter=itertools.count(1)

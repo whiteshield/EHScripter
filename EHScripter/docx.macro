@@ -3,14 +3,14 @@ Sub DefaultFormat()
     Dim oShp As Shape
     Dim oILShp As InlineShape
     Dim oPara As Paragraph
-    
+
     Dim oTbl As Table
-    
+
     For Each oTbl In ActiveDocument.Tables
         oTbl.Style = "Table Grid"
         oTbl.AutoFitBehavior wdAutoFitContent
         oTbl.Rows.Alignment = wdAlignRowCenter
-        
+
         oTbl.Select
         GoDown = Selection.MoveDown(Unit:=wdLine, Count:=1)
         Selection.StartOf Unit:=wdParagraph
@@ -19,7 +19,7 @@ Sub DefaultFormat()
             .ParagraphFormat.Style = "Caption"
         End With
     Next
-    
+
     For Each oShp In ActiveDocument.Shapes
         With oShp
             .LockAspectRatio = True

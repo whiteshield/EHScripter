@@ -34,6 +34,8 @@ Output formats:
 
 #ChangeLog
 
+- v0.4 - Read multiple files from dirs (*.nessus, *.burp, *.acunetix)
+
 - v0.3 - Nessus CVSS score and vector, all type of risk factor to title case, KALI setup instruction in README.md
 
 - v0.2 - Nessus "None" risk factor to "Info", rename to EHScripter

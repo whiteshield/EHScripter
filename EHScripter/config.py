@@ -145,7 +145,7 @@ $solution
 
 
 
-        
+
 
         # for burp
         if not inputs.get('burp').get('load_file')  and inputs.get('burp').get('load_file') != "":
@@ -213,7 +213,7 @@ $remediationDetail
 
 
 
-        
+
 
         # for acunetix
         if not inputs.get('acunetix').get('load_file')  and inputs.get('acunetix').get('load_file') != "":

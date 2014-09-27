@@ -48,7 +48,7 @@ class EHScripterApplication(Frame):
     def loadInput(self):
         try:
             with open(self.inputyaml) as in_file:
-                self.inputs=yaml.load(in_file)           
+                self.inputs=yaml.load(in_file)
         except Exception as e:
             self.inputs={}
         self.inputs=DefaultConfig.check(self.inputs)
@@ -83,7 +83,7 @@ class EHScripterApplication(Frame):
         self.inputs['doc']['preface_markdown_file']=self.widgets['doc']['preface_markdown_file'].get()
         self.inputs['doc']['company']=self.widgets['doc']['company'].get()
         self.inputs['doc']['partner']=self.widgets['doc']['partner'].get()
-        
+
 
         self.inputs['doc']['format']=self.outputs['doc']['format'].get()
 
@@ -113,14 +113,14 @@ class EHScripterApplication(Frame):
         self.inputs['doc']['regex_assessment_state']=self.widgets['doc']['regex_assessment_state'].get()
         self.inputs['doc']['regex_related_risk']=self.widgets['doc']['regex_related_risk'].get()
         self.inputs['doc']['regex_recommendation']=self.widgets['doc']['regex_recommendation'].get()
-        
+
         self.saveInput()
 
     def nessusRun(self):
         self.readOutput()
         letsgo=True
-        if not os.path.isfile(self.inputs['nessus']['load_file']):
-            messagebox.showerror("Error", "%s\nNessus input file not exists!"%self.inputs['nessus']['load_file'])
+        if (not os.path.isfile(self.inputs['nessus']['load_file'])) and (not os.path.isdir(self.inputs['nessus']['load_file'])):
+            messagebox.showerror("Error", "%s\nNessus input file/dir not exists!"%self.inputs['nessus']['load_file'])
             letsgo=False
         if not os.path.isdir(self.inputs['nessus']['output_dir']):
             try:
@@ -153,8 +153,8 @@ class EHScripterApplication(Frame):
     def burpRun(self):
         self.readOutput()
         letsgo=True
-        if not os.path.isfile(self.inputs['burp']['load_file']):
-            messagebox.showerror("Error", "%s\nBurp input file not exists!"%self.inputs['burp']['load_file'])
+        if (not os.path.isfile(self.inputs['burp']['load_file'])) and (not os.path.isdir(self.inputs['burp']['load_file'])):
+            messagebox.showerror("Error", "%s\nBurp input file/dir not exists!"%self.inputs['burp']['load_file'])
             letsgo=False
         if not os.path.isdir(self.inputs['burp']['output_dir']):
             try:
@@ -188,8 +188,8 @@ class EHScripterApplication(Frame):
     def acunetixRun(self):
         self.readOutput()
         letsgo=True
-        if not os.path.isfile(self.inputs['acunetix']['load_file']):
-            messagebox.showerror("Error", "%s\nAcunetix input file not exists!"%self.inputs['acunetix']['load_file'])
+        if (not os.path.isfile(self.inputs['acunetix']['load_file'])) and (not os.path.isdir(self.inputs['acunetix']['load_file'])):
+            messagebox.showerror("Error", "%s\nAcunetix input file/dir not exists!"%self.inputs['acunetix']['load_file'])
             letsgo=False
         if not os.path.isdir(self.inputs['acunetix']['output_dir']):
             try:
@@ -222,7 +222,7 @@ class EHScripterApplication(Frame):
 
     def setupNessusFrame(self):
         self.frameNessus = Frame(self.notebook, padding="10 10 10 10")
-        Label(self.frameNessus, text="Input file:").grid(column=1, row=1, sticky=(E))
+        Label(self.frameNessus, text="Input file or dir (*.nessus):").grid(column=1, row=1, sticky=(E))
         Label(self.frameNessus, text="Template:").grid(column=1, row=2, sticky=(E))
         Label(self.frameNessus, text="name, port, svc_name, protocol, pluginName, pluginFamily, solution, risk_factor, description, plugin_output, cvss_base_score, cvss_vector, findinglist", wraplength=300).grid(column=5, row=2, sticky=(N, W))
         Label(self.frameNessus, text="Merge:").grid(column=1, row=3, sticky=(E))
@@ -293,7 +293,7 @@ class EHScripterApplication(Frame):
 
     def setupBurpFrame(self):
         self.frameBurp = Frame(self.notebook, padding="10 10 10 10")
-        Label(self.frameBurp, text="Input file:").grid(column=1, row=1, sticky=(E))
+        Label(self.frameBurp, text="Input file or dir (*.burp):").grid(column=1, row=1, sticky=(E))
         Label(self.frameBurp, text="Template:").grid(column=1, row=2, sticky=(E))
         Label(self.frameBurp, text="serialNumber, type, name, host, path, location, severity, confidence, issueBackground, remediationBackground, issueDetail, issueDetailItems, remediationDetail, requestresponse_request, requestresponse_request_method, requestresponse_request_base64, requestresponse_response, requestresponse_response_base64, requestresponse_responseRedirected, $findinglist", wraplength=300).grid(column=5, row=2, sticky=(N, W))
 
@@ -367,7 +367,7 @@ class EHScripterApplication(Frame):
     def setupAcunetixFrame(self):
 
         self.frameAcunetix = Frame(self.notebook, padding="10 10 10 10")
-        Label(self.frameAcunetix, text="Input file:").grid(column=1, row=1, sticky=(E))
+        Label(self.frameAcunetix, text="Input file or dir (*.acunetix):").grid(column=1, row=1, sticky=(E))
         Label(self.frameAcunetix, text="Template:").grid(column=1, row=2, sticky=(E))
         Label(self.frameAcunetix, text="Name, ModuleName, Details, Affects, Parameter, AOP_SourceFile, AOP_SourceLine, AOP_Additional, IsFalsePositive, Severity, Type, Impact, Description, DetailedInformation, Recommendation, Request, Response", wraplength=300).grid(column=5, row=2, sticky=(N, W))
         Label(self.frameAcunetix, text="Merge:").grid(column=1, row=3, sticky=(E))
@@ -483,7 +483,7 @@ class EHScripterApplication(Frame):
             letsgo=False
         if letsgo:
             GenerateDoc(self.inputs['doc'])
-            
+
 
     def docPieChartChanged(self):
         if self.outputs['doc']['pie_chart'].get() :
@@ -542,7 +542,7 @@ class EHScripterApplication(Frame):
         Label(self.frameDoc, text="Info short:").grid(column=3, row=23, sticky=(E))
         Label(self.frameDoc, text="Risk list:").grid(column=1, row=24, sticky=(E))
         Label(self.frameDoc, text="Category list:").grid(column=1, row=25, sticky=(E))
-        
+
         Label(self.frameDoc, text="REGEX Title:").grid(column=3, row=11, sticky=(E))
         Label(self.frameDoc, text="REGEX Category:").grid(column=3, row=12, sticky=(E))
         Label(self.frameDoc, text="REGEX Risk level:").grid(column=3, row=13, sticky=(E))
@@ -582,7 +582,7 @@ class EHScripterApplication(Frame):
 
         self.addEntry(self.frameDoc, 'doc', 'company', 2, 8)
         self.addEntry(self.frameDoc, 'doc', 'partner', 2, 9)
-        
+
         Button(self.frameDoc, text="RUN", command=self.docRun).grid(column=1, row=10, columnspan=4)
 
         self.addEntry(self.frameDoc, 'doc', 'txt_pie', 2, 11)
@@ -612,7 +612,7 @@ class EHScripterApplication(Frame):
         self.addEntry(self.frameDoc, 'doc', 'regex_assessment_state', 4, 14)
         self.addEntry(self.frameDoc, 'doc', 'regex_related_risk', 4, 15)
         self.addEntry(self.frameDoc, 'doc', 'regex_recommendation', 4, 16)
-        
+
         self.frameDoc.columnconfigure(1, weight=3, minsize=120)
         self.frameDoc.columnconfigure(2, weight=3, minsize=120)
         self.frameDoc.columnconfigure(3, weight=3, minsize=120)
@@ -655,7 +655,7 @@ class EHScripterApplication(Frame):
     def setupGUI(self):
         self.window = PanedWindow(self.main, orient=HORIZONTAL)
         self.notebook = Notebook(self.main)
-        
+
 
         self.setupNessusFrame();
         self.setupBurpFrame();
@@ -681,7 +681,7 @@ class EHScripterApplication(Frame):
     def getBestGeometry(self):
         ws = self.main.winfo_screenwidth()
         hs = self.main.winfo_screenheight()
-        w=800 
+        w=800
         h=600
         x = (ws/2)-(w/2)
         y = (hs/2)-(h/2)
