@@ -36,8 +36,10 @@ class GenerateDoc:
         separators.append({'name':'assessmentstate','re':re.compile(self.options['regex_assessment_state'], re.DOTALL|re.MULTILINE|re.UNICODE)})
         separators.append({'name':'relatedrisk','re':re.compile(self.options['regex_related_risk'], re.DOTALL|re.MULTILINE|re.UNICODE)})
         separators.append({'name':'recommendation','re':re.compile(self.options['regex_recommendation'], re.DOTALL|re.MULTILINE|re.UNICODE)})
+        separators.append({'name':'table','re':re.compile('^-----------\|', re.DOTALL|re.MULTILINE|re.UNICODE)})
 
         named=['title']
+
 
         pieces=[]
         for position in range(0,len(findingtext)-1):
@@ -55,6 +57,7 @@ class GenerateDoc:
         returndict={}
         for piece in pieces :
             returndict[piece['name']] = piece['text'] if piece['text'] else findingtext[piece['start']:piece['end']].strip()
+
         return returndict
 
 
@@ -286,8 +289,8 @@ class GenerateDoc:
         tmpfile.write(t.strip())
         tmpfile.close()
         if len(self.options['reference_doc'].strip())>0:
-            command = 'pandoc -s --reference-%s %s -o %s -f markdown+pipe_tables-raw_html -t %s %s/vulns.md '%(self.options['format'],self.options['reference_doc'],self.options['output_file'],self.options['format'],self.options["load_dir"])
+            command = 'cd %s;pandoc -s --reference-%s %s -o %s -f markdown+tex_math_dollars+pipe_tables-raw_html -t %s %s/vulns.md '%(self.options["load_dir"],self.options['format'],self.options['reference_doc'],self.options['output_file'],self.options['format'],self.options["load_dir"])
         else :
-            command = 'pandoc -s -o %s -f markdown+pipe_tables-raw_html -t %s %s/vulns.md '%(self.options['output_file'],self.options['format'],self.options["load_dir"])
+            command = 'cd %s;pandoc -s -o %s -f markdown+tex_math_dollars+pipe_tables-raw_html -t %s %s/vulns.md '%(self.options["load_dir"], self.options['output_file'],self.options['format'],self.options["load_dir"])
         os.system( command )
         print(command)

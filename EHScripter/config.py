@@ -181,9 +181,11 @@ $remediationDetail
 
 """
         if not inputs.get('burp').get('merge_findinglist_template')  and inputs.get('burp').get('merge_findinglist_template') != "":
-            inputs['burp']['merge_findinglist_template']="""- [$host$path]($host$path)
+            inputs['burp']['merge_findinglist_template']="""- $host$location
 
 ~~~
+$issueDetail
+
 $issueDetailItems
 ~~~
 
@@ -245,7 +247,7 @@ $Recommendation
 
 """
         if not inputs.get('acunetix').get('merge_findinglist_template')  and inputs.get('acunetix').get('merge_findinglist_template') != "":
-            inputs['acunetix']['merge_findinglist_template']="""- $Affects
+            inputs['acunetix']['merge_findinglist_template']="""- $StartURL - $Affects
 
 ~~~
 $Details

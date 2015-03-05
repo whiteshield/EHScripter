@@ -46,7 +46,7 @@ Output formats:
 
 ##Linux packages:
 
-    sudo apt-get install python3 python3-tk python3-yaml python3-setuptools libyaml-dev python3-dev libffi-dev pandoc libxslt-dev libxml2-dev
+    sudo apt-get install python3 python3-tk python3-yaml python3-setuptools libyaml-dev python3-dev libffi-dev pandoc libxslt-dev libxml2-dev texlive-full
 
 ###KALI users need to upgrade pandoc manually:
 

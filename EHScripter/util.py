@@ -27,8 +27,9 @@ def html2markdown(text, enc=False, withspaces=False):
             pass
         if enc:
             line = cgi.escape(line)
-
-        converted_text=html2text.html2text(line).strip()
+        h = html2text.HTML2Text()
+        #converted_text=html2text.html2text(line).strip()
+        converted_text=h.handle(line).strip()
         converted_text=converted_text.replace('\\-\n','- ')
         converted_text=converted_text.replace('\\-','-')
         converted_text=converted_text.replace(r'\\_',r'\_')

@@ -35,7 +35,7 @@ class AcunetixToMarkdown:
         for processfile in filelist:
             tree = etree.parse(processfile)
             reportitems=tree.xpath('//ReportItem')
-            fullurl=self.value(tree.xpath('//StartURL//text()'),'host')
+            StartURL=self.value(tree.xpath('//StartURL//text()'),'host')
             for reportitem in reportitems:
                 Name=self.value(reportitem.xpath('./Name//text()'),'N/A')
                 ModuleName=self.value(reportitem.xpath('./ModuleName//text()'),'N/A')
@@ -56,9 +56,9 @@ class AcunetixToMarkdown:
                 Recommendation=self.value(reportitem.xpath('./Recommendation//text()'),'N/A')
                 Request=self.value(reportitem.xpath('./TechnicalDetails/Request//text()'),'N/A')
                 Response=self.value(reportitem.xpath('./TechnicalDetails/Response//text()'),'N/A')
-                d={'Name':Name, 'ModuleName':ModuleName, 'Details':Details, 'Affects':Affects, 'Parameter':Parameter, 'AOP_SourceFile':AOP_SourceFile, 'AOP_SourceLine':AOP_SourceLine, 'AOP_Additional':AOP_Additional, 'IsFalsePositive':IsFalsePositive, 'Severity':Severity, 'Type':Type, 'Impact':Impact, 'Description':Description, 'DetailedInformation':DetailedInformation, 'Recommendation':Recommendation, 'Request':Request, 'Response':Response,'findinglist':''}
+                d={'Name':Name, 'ModuleName':ModuleName, 'Details':Details, 'Affects':Affects, 'Parameter':Parameter, 'AOP_SourceFile':AOP_SourceFile, 'AOP_SourceLine':AOP_SourceLine, 'AOP_Additional':AOP_Additional, 'IsFalsePositive':IsFalsePositive, 'Severity':Severity, 'Type':Type, 'Impact':Impact, 'Description':Description, 'DetailedInformation':DetailedInformation, 'Recommendation':Recommendation, 'Request':Request, 'Response':Response, 'StartURL':StartURL,'findinglist':''}
                 if not self.options['merge']:
-                    dirname=slugify('%s-%s-%s-%04d-acunetix'%(Severity, fullurl, Name, counter))
+                    dirname=slugify('%s-%s-%s-%04d-acunetix'%(Severity, StartURL, Name, counter))
                     if not os.path.exists(self.options['output_dir']+'/'+dirname):
                         os.makedirs(self.options['output_dir']+'/'+dirname)
                     counter+=1
@@ -79,6 +79,7 @@ class AcunetixToMarkdown:
                 d['Request']=d['Request'].replace('$','$$')
                 d['Response']=d['Response'].replace('$','$$')
                 d['Details']=d['Details'].replace('$','$$')
+                d['StartURL']=d['StartURL'].replace('$','$$')
                 temp=self.merge_findinglist_template
                 text=temp.substitute(d)
                 findinglist+=text+"\n\n"

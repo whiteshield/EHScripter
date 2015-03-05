@@ -32,6 +32,9 @@ class NessusToMarkdown:
                     filelist.append(self.options["load_file"]+'/'+name)
         counter=1
         findings={}
+        findingsbyip={}
+        findingsbyplugin={}
+        risklevellistpositions={'info':4,'low':3,'medium':2,'high':1,'critical':0}
         for processfile in filelist:
             tree = etree.parse(processfile)
             reporthosts=tree.xpath("//ReportHost")
@@ -72,7 +75,42 @@ class NessusToMarkdown:
                                 slug=slugify('%s-%s-nessus'%(risk_factor, pluginName))
                                 if not findings.get(slug):
                                     findings[slug]=[]
-                                findings[slug].append(d)
+                                m = re.match("^\d+\.\d+\.\d+\.\d+$", name)
+                                if m:
+                                    nameip="%03d.%03d.%03d.%03d" % tuple(int(ippart) for ippart in name.split("."))
+                                else :
+                                    nameip=name
+                                slugbyip=slugify('%s-%s-%05d-%s-%d'%(nameip, pluginName, int(port), protocol, risklevellistpositions[risk_factor.lower()]))
+                                if not findingsbyip.get(slugbyip):
+                                    findingsbyip[slugbyip]={'name':name, 'port':port, 'protocol':protocol, 'pluginName':pluginName, 'risk_factor':risk_factor}
+                                slugbyplugin=slugify('%d-%s-%s-%05d-%s'%(risklevellistpositions[risk_factor.lower()], pluginName, nameip, int(port), protocol))
+                                if not findingsbyplugin.get(slugbyplugin):
+                                    findingsbyplugin[slugbyplugin]={'name':name, 'port':port, 'protocol':protocol, 'pluginName':pluginName, 'risk_factor':risk_factor}
+                                gotit=False
+                                for dinfindings in findings[slug]:
+                                    if d['name'] == dinfindings['name'] and d['port'] == dinfindings['port'] and d['svc_name'] == dinfindings['svc_name'] and d['protocol'] == dinfindings['protocol'] and d['risk_factor'] == dinfindings['risk_factor'] and d['description'] == dinfindings['description'] and d['plugin_output'] == dinfindings['plugin_output']:
+                                        gotit=True
+                                if not gotit:
+                                    findings[slug].append(d)
+                                    pass
+        sumtextbyip="ip;plugin;port;protocol;risk\n"
+        sumtexttemplatebyip=string.Template("$name;$pluginName;$port;$protocol;$risk_factor")
+        for key  in sorted(findingsbyip.keys()):
+            text=sumtexttemplatebyip.substitute(findingsbyip[key])
+            sumtextbyip+=text+"\n"
+        tmpfile = open(self.options['output_dir']+'/sumbyip.csv', 'w');
+        tmpfile.write(sumtextbyip)
+        tmpfile.close()
+
+        sumtextbyplugin="risk;plugin;ip;port;protocol\n"
+        sumtexttemplatebyplugin=string.Template("$risk_factor;$pluginName;$name;$port;$protocol")
+        for key  in sorted(findingsbyplugin.keys()):
+            text=sumtexttemplatebyplugin.substitute(findingsbyplugin[key])
+            sumtextbyplugin+=text+"\n"
+        tmpfile = open(self.options['output_dir']+'/sumbyplugin.csv', 'w');
+        tmpfile.write(sumtextbyplugin)
+        tmpfile.close()
+
         for key, values in findings.items():
             findinglist = ''
             for d in values:

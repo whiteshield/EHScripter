@@ -38,6 +38,7 @@ class BurpToMarkdown:
             issues=tree.xpath('//issues/issue')
             for issue in issues:
                 serialNumber=self.value(issue.xpath('./serialNumber//text()'),'N/A')
+                #print(processfile, serialNumber)
                 btype=self.value(issue.xpath('./type//text()'),'N/A')
                 name=self.value(issue.xpath('./name//text()'),'N/A')
                 host=self.value(issue.xpath('./host//text()'),'N/A')
