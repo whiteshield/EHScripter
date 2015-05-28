@@ -34,6 +34,10 @@ Output formats:
 
 #ChangeLog
 
+- v0.6 - Netsparker support added (detailed html reports renamed to *.netsparker)
+
+- v0.5 - Small improvements
+
 - v0.4 - Read multiple files from dirs (*.nessus, *.burp, *.acunetix)
 
 - v0.3 - Nessus CVSS score and vector, all type of risk factor to title case, KALI setup instruction in README.md
@@ -47,6 +51,7 @@ Output formats:
 ##Linux packages:
 
     sudo apt-get install python3 python3-tk python3-yaml python3-setuptools libyaml-dev python3-dev libffi-dev pandoc libxslt-dev libxml2-dev texlive-full
+    easy_install3 pip
 
 ###KALI users need to upgrade pandoc manually:
 
@@ -59,10 +64,30 @@ Add .cabal/bin dir to your path:
     
     PATH="$HOME/.cabal/bin:$PATH"
 
+##OSX
+
+With [Homebrew](http://brew.sh/) install python3.
+
+    brew install python3 
+
+Add correct locale info to ~/.bash_profile if you don't have already (and don't forget te open new terminal or `source ~/.bash_profile`):
+
+    export LC_ALL=en_US.UTF-8
+    export LANG=en_US.UTF-8
+
+For cairo dependencies, install XQuartz, and finally cairo.
+
+    brew install Caskroom/cask/xquartz
+    sudo chown -R $USER:admin /usr/local/share/man/man5
+    brew link libpng fontconfig
+    brew install py3cairo
+
+Install [Pandoc](https://github.com/jgm/pandoc/releases).
+
+
 
 ##Python3 packages:
 
-    easy_install3 pip
     pip3 install pyyaml lxml pygal cairosvg cssselect tinycss html2text
 
 #License

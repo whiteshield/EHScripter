@@ -2,7 +2,7 @@ import re
 import unicodedata
 import cgi
 import html2text
-import html.parser
+
 
 def slugify(text, delim='-'):
     _punct_re = re.compile(r'[\t !"#$%&\'()*\-/<=>?@\[\\\]^_`{|},.\:]+')
@@ -12,6 +12,7 @@ def slugify(text, delim='-'):
         if word:
             result.append(word.decode("utf-8"))
     return delim.join(result)
+
 
 def html2markdown(text, enc=False, withspaces=False):
     text=text.replace("</ul>","</ul>\n\n")
@@ -27,9 +28,9 @@ def html2markdown(text, enc=False, withspaces=False):
             pass
         if enc:
             line = cgi.escape(line)
-        h = html2text.HTML2Text()
-        #converted_text=html2text.html2text(line).strip()
-        converted_text=h.handle(line).strip()
+        converted_text=html2text.html2text(line).strip()
+        #h = html2text.HTML2Text()
+        #converted_text=h.handle(line).strip()
         converted_text=converted_text.replace('\\-\n','- ')
         converted_text=converted_text.replace('\\-','-')
         converted_text=converted_text.replace(r'\\_',r'\_')

@@ -10,6 +10,14 @@ except:
     exit(1)
 
 try:
+    import io
+except ImportError:
+    print("\n[CAUTION] io is not found")
+except:
+    raise
+    exit(1)
+
+try:
     import yaml
 except ImportError:
     print("\n[CAUTION] yaml (pyyaml) is not found")

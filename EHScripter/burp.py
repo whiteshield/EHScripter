@@ -33,12 +33,14 @@ class BurpToMarkdown:
                     filelist.append(self.options["load_file"]+'/'+name)
         counter=1
         findings={}
+        filecounter=1
         for processfile in filelist:
             tree = etree.parse(processfile)
             issues=tree.xpath('//issues/issue')
+            issuecounter=1
             for issue in issues:
                 serialNumber=self.value(issue.xpath('./serialNumber//text()'),'N/A')
-                #print(processfile, serialNumber)
+                #print(processfile, '%d/%d'%(filecounter,len(filelist)), serialNumber, '%d/%d'%(issuecounter,len(issues)))
                 btype=self.value(issue.xpath('./type//text()'),'N/A')
                 name=self.value(issue.xpath('./name//text()'),'N/A')
                 host=self.value(issue.xpath('./host//text()'),'N/A')
@@ -54,14 +56,20 @@ class BurpToMarkdown:
                 issueBackground=self.value(issue.xpath('./issueBackground//text()'),'N/A')
                 remediationBackground=self.value(issue.xpath('./remediationBackground//text()'),'N/A')
                 issueDetail=self.value(issue.xpath('./issueDetail//text()'),'N/A')
-                issueDetailItems=self.blist(issue.xpath('./issueDetailItems//text()'),'')
+                issueDetailItems=self.value(issue.xpath('./issueDetailItems//text()'),'')
                 remediationDetail=self.value(issue.xpath('./remediationDetail//text()'),'N/A')
-                requestresponse_request=self.value(issue.xpath('./requestresponse/request//text()'),'N/A')
-                requestresponse_response=self.value(issue.xpath('./requestresponse/response//text()'),'N/A')
-                requestresponse_request_method=self.attrib(issue.xpath('./requestresponse/request'),'method','N/A')
-                requestresponse_request_base64=self.attrib(issue.xpath('./requestresponse/request'),'base64','N/A')
-                requestresponse_response_base64=self.attrib(issue.xpath('./requestresponse/response'),'base64','N/A')
-                requestresponse_responseRedirected=self.value(issue.xpath('./requestresponse/responseRedirected//text()'),'N/A')
+                #requestresponse_request=self.value(issue.xpath('./requestresponse/request//text()'),'N/A')
+                #requestresponse_response=self.value(issue.xpath('./requestresponse/response//text()'),'N/A')
+                #requestresponse_request_method=self.attrib(issue.xpath('./requestresponse/request'),'method','N/A')
+                #requestresponse_request_base64=self.attrib(issue.xpath('./requestresponse/request'),'base64','N/A')
+                #requestresponse_response_base64=self.attrib(issue.xpath('./requestresponse/response'),'base64','N/A')
+                #requestresponse_responseRedirected=self.value(issue.xpath('./requestresponse/responseRedirected//text()'),'N/A')
+                requestresponse_request=''
+                requestresponse_response=''
+                requestresponse_request_method=''
+                requestresponse_request_base64=''
+                requestresponse_response_base64=''
+                requestresponse_responseRedirected=''
                 dirname=slugify('%s-%04d-%s-%s-burp'%(severity, counter, host, name))
                 d={'serialNumber':serialNumber, 'type':btype, 'name':name, 'host':host, 'host_ip':host_ip, 'path':path, 'location': location, 'severity': severity, 'confidence': confidence, 'issueBackground': issueBackground, 'remediationBackground': remediationBackground, 'issueDetail': issueDetail,'remediationBackground_and_Detail':(remediationBackground+'\n\n'+remediationDetail).strip(), 'remediationDetail': remediationDetail, 'requestresponse_request': requestresponse_request, 'requestresponse_response': requestresponse_response, 'requestresponse_responseRedirected': requestresponse_responseRedirected, 'requestresponse_request_method':requestresponse_request_method, 'requestresponse_request_base64':requestresponse_request_base64, 'requestresponse_response_base64': requestresponse_response_base64,'issueDetailItems':issueDetailItems}
                 if not self.options['merge']:
@@ -81,6 +89,8 @@ class BurpToMarkdown:
                     if not findings.get(slug):
                         findings[slug]=[]
                     findings[slug].append(d)
+                issuecounter+=1
+            filecounter+=1
         for key, values in findings.items():
             findinglist = ''
             for d in values:
@@ -102,7 +112,8 @@ class BurpToMarkdown:
 
     def value(self, x, default):
         try:
-            ret=html2markdown(x[0].strip())
+            #ret=html2markdown(x[0].strip())
+            ret="\n".join([html2markdown(html2markdown(y.strip(), True)) for y in x])
         except Exception as e:
             try:
                 ret=x.strip()

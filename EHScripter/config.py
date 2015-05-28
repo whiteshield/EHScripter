@@ -14,16 +14,18 @@ class DefaultConfig():
             inputs['burp']={}
         if not inputs.get('acunetix'):
             inputs['acunetix']={}
+        if not inputs.get('netsparker'):
+            inputs['netsparker']={}
         if not inputs.get('doc').get('load_dir')  and inputs.get('doc').get('load_dir') != "":
-            inputs['doc']['load_dir']='/projects/test/results.final'
+            inputs['doc']['load_dir']='/projects/test/findings/final'
         if not inputs.get('doc').get('output_file')  and inputs.get('doc').get('output_file') != "":
-            inputs['doc']['output_file']='/projects/test/result.docx'
+            inputs['doc']['output_file']='/projects/test/findings/final/result.docx'
         if not inputs.get('doc').get('reference_doc') and inputs.get('doc').get('reference_doc') != "":
-            inputs['doc']['reference_doc']='/projects/test/reference.docx'
+            inputs['doc']['reference_doc']='/projects/test/findings/final/reference.docx'
         if not inputs.get('doc').get('format')  and inputs.get('doc').get('format') != "":
             inputs['doc']['format']='docx'
         if not inputs.get('doc').get('preface_markdown_file')  and inputs.get('doc').get('preface_markdown_file') != "":
-            inputs['doc']['preface_markdown_file']='/projects/test/preface.md'
+            inputs['doc']['preface_markdown_file']='/projects/test/findings/final/preface.md'
         if not inputs.get('doc').get('pie_chart') and not inputs.get('doc').get('pie_chart')==False:
             inputs['doc']['pie_chart']=True
         if not inputs.get('doc').get('matrix') and not inputs.get('doc').get('matrix')==False:
@@ -91,13 +93,13 @@ class DefaultConfig():
 
         # for nessus
         if not inputs.get('nessus').get('load_file')  and inputs.get('nessus').get('load_file') != "":
-            inputs['nessus']['load_file']='/projects/test/test.nessus'
+            inputs['nessus']['load_file']='/projects/test/nessus'
         if not inputs.get('nessus').get('merge') and not inputs.get('nessus').get('merge')==False:
             inputs['nessus']['merge']=True
         if not inputs.get('nessus').get('result_overwrite') and not inputs.get('nessus').get('result_overwrite')==False:
             inputs['nessus']['result_overwrite']=True
         if not inputs.get('nessus').get('output_dir')  and inputs.get('nessus').get('output_dir') != "":
-            inputs['nessus']['output_dir']='/projects/test/results.nessus'
+            inputs['nessus']['output_dir']='/projects/test/findings/nessus'
         if not inputs.get('nessus').get('merge_template')  and inputs.get('nessus').get('merge_template') != "":
             inputs['nessus']['merge_template']="""##$pluginName##
 
@@ -149,13 +151,13 @@ $solution
 
         # for burp
         if not inputs.get('burp').get('load_file')  and inputs.get('burp').get('load_file') != "":
-            inputs['burp']['load_file']='/projects/test/test.burp'
+            inputs['burp']['load_file']='/projects/test/burp'
         if not inputs.get('burp').get('merge') and not inputs.get('burp').get('merge')==False:
             inputs['burp']['merge']=True
         if not inputs.get('burp').get('result_overwrite') and not inputs.get('burp').get('result_overwrite')==False:
             inputs['burp']['result_overwrite']=True
         if not inputs.get('burp').get('output_dir')  and inputs.get('burp').get('output_dir') != "":
-            inputs['burp']['output_dir']='/projects/test/results.burp'
+            inputs['burp']['output_dir']='/projects/test/findings/burp'
         if not inputs.get('burp').get('merge_template')  and inputs.get('burp').get('merge_template') != "":
             inputs['burp']['merge_template']="""##$name##
 
@@ -219,13 +221,13 @@ $remediationDetail
 
         # for acunetix
         if not inputs.get('acunetix').get('load_file')  and inputs.get('acunetix').get('load_file') != "":
-            inputs['acunetix']['load_file']='/projects/test/test.acunetix'
+            inputs['acunetix']['load_file']='/projects/test/acunetix'
         if not inputs.get('acunetix').get('merge') and not inputs.get('acunetix').get('merge')==False:
             inputs['acunetix']['merge']=True
         if not inputs.get('acunetix').get('result_overwrite') and not inputs.get('acunetix').get('result_overwrite')==False:
             inputs['acunetix']['result_overwrite']=True
         if not inputs.get('acunetix').get('output_dir')  and inputs.get('acunetix').get('output_dir') != "":
-            inputs['acunetix']['output_dir']='/projects/test/results.acunetix'
+            inputs['acunetix']['output_dir']='/projects/test/findings/acunetix'
         if not inputs.get('acunetix').get('merge_template')  and inputs.get('acunetix').get('merge_template') != "":
             inputs['acunetix']['merge_template']="""##$Name##
 
@@ -270,6 +272,65 @@ $Impact
 
 **Recommendation**  
 $Recommendation
+
+"""
+
+
+
+
+        # for netsparker
+        if not inputs.get('netsparker').get('load_file')  and inputs.get('netsparker').get('load_file') != "":
+            inputs['netsparker']['load_file']='/projects/test/netsparker'
+        if not inputs.get('netsparker').get('merge') and not inputs.get('netsparker').get('merge')==False:
+            inputs['netsparker']['merge']=True
+        if not inputs.get('netsparker').get('result_overwrite') and not inputs.get('netsparker').get('result_overwrite')==False:
+            inputs['netsparker']['result_overwrite']=True
+        if not inputs.get('netsparker').get('output_dir')  and inputs.get('netsparker').get('output_dir') != "":
+            inputs['netsparker']['output_dir']='/projects/test/findings/netsparker'
+        if not inputs.get('netsparker').get('merge_template')  and inputs.get('netsparker').get('merge_template') != "":
+            inputs['netsparker']['merge_template']="""##$Vulnerability##
+
+**Category:** N/A  
+**Risk level:** $Risk
+
+Affected links:
+
+$findinglist
+
+**Assessment state**  
+$VulnDesc
+
+**Related risk**  
+N/A
+
+**Recommendation**  
+N/A
+
+"""
+        if not inputs.get('netsparker').get('merge_findinglist_template')  and inputs.get('netsparker').get('merge_findinglist_template') != "":
+            inputs['netsparker']['merge_findinglist_template']="""- $SubVulnerability - $Link
+
+$ParamTable
+
+"""
+        if not inputs.get('netsparker').get('template')  and inputs.get('netsparker').get('template') != "":
+            inputs['netsparker']['template']="""##$Vulnerability - $Target - $SubVulnerability##
+
+**Category:** N/A  
+**Risk level:** $Risk
+
+- $SubVulnerability - $Link
+
+$ParamTable
+
+**Assessment state**  
+$VulnDesc
+
+**Related risk**  
+N/A
+
+**Recommendation**  
+N/A
 
 """
 

@@ -8,10 +8,12 @@ from tkinter import filedialog, messagebox, simpledialog
 import re, os, platform
 import time
 import yaml
+import imp
 from .config import DefaultConfig
 from .nessus import NessusToMarkdown
 from .burp import BurpToMarkdown
 from .acunetix import AcunetixToMarkdown
+from .netsparker import NetsparkerToMarkdown
 from .doc import GenerateDoc
 
 
@@ -30,8 +32,8 @@ class EHScripterApplication(Frame):
 
         #self.currplatform=platform.system()
         self.inputyaml='%s/.EHScripter.yaml'%os.path.expanduser("~")
-        self.outputs={'nessus':{},'burp':{},'doc':{},'acunetix':{}}
-        self.widgets={'nessus':{},'burp':{},'doc':{},'acunetix':{}}
+        self.outputs={'nessus':{},'burp':{},'doc':{},'acunetix':{},'netsparker':{}}
+        self.widgets={'nessus':{},'burp':{},'doc':{},'acunetix':{},'netsparker':{}}
 
         #self.style = Style()
         #available_themes = self.style.theme_names()
@@ -77,6 +79,11 @@ class EHScripterApplication(Frame):
         self.inputs['acunetix']['template']=self.widgets['acunetix']['template'].get(1.0,"%s-1c" % END)
         self.inputs['acunetix']['merge_template']=self.widgets['acunetix']['merge_template'].get(1.0,"%s-1c" % END)
         self.inputs['acunetix']['merge_findinglist_template']=self.widgets['acunetix']['merge_findinglist_template'].get(1.0,"%s-1c" % END)
+        self.inputs['netsparker']['load_file']=self.widgets['netsparker']['load_file'].get()
+        self.inputs['netsparker']['output_dir']=self.widgets['netsparker']['output_dir'].get()
+        self.inputs['netsparker']['template']=self.widgets['netsparker']['template'].get(1.0,"%s-1c" % END)
+        self.inputs['netsparker']['merge_template']=self.widgets['netsparker']['merge_template'].get(1.0,"%s-1c" % END)
+        self.inputs['netsparker']['merge_findinglist_template']=self.widgets['netsparker']['merge_findinglist_template'].get(1.0,"%s-1c" % END)
         self.inputs['doc']['load_dir']=self.widgets['doc']['load_dir'].get()
         self.inputs['doc']['output_file']=self.widgets['doc']['output_file'].get()
         self.inputs['doc']['reference_doc']=self.widgets['doc']['reference_doc'].get()
@@ -201,6 +208,22 @@ class EHScripterApplication(Frame):
             AcunetixToMarkdown(self.inputs['acunetix'])
             pass
 
+    def netsparkerRun(self):
+        self.readOutput()
+        letsgo=True
+        if (not os.path.isfile(self.inputs['netsparker']['load_file'])) and (not os.path.isdir(self.inputs['netsparker']['load_file'])):
+            messagebox.showerror("Error", "%s\nNetsparker input file/dir not exists!"%self.inputs['netsparker']['load_file'])
+            letsgo=False
+        if not os.path.isdir(self.inputs['netsparker']['output_dir']):
+            try:
+                os.makedirs(self.inputs['netsparker']['output_dir'])
+            except Exception as e:
+                letsgo=False
+                messagebox.showerror("Error", "%s\nUnable to create output dir!"%self.inputs['netsparker']['output_dir'])
+        if letsgo:
+            NetsparkerToMarkdown(self.inputs['netsparker'])
+            pass
+
     def acunetixMergeChanged(self):
         if self.outputs['acunetix']['merge'].get() :
             self.inputs['acunetix']['merge']=True
@@ -218,6 +241,25 @@ class EHScripterApplication(Frame):
             self.inputs['acunetix']['result_overwrite']=True
         else:
             self.inputs['acunetix']['result_overwrite']=False
+
+
+    def netsparkerMergeChanged(self):
+        if self.outputs['netsparker']['merge'].get() :
+            self.inputs['netsparker']['merge']=True
+            self.widgets['netsparker']['template'].config(state=DISABLED)
+            self.widgets['netsparker']['merge_template'].config(state=NORMAL)
+            self.widgets['netsparker']['merge_findinglist_template'].config(state=NORMAL)
+        else:
+            self.widgets['netsparker']['template'].config(state=NORMAL)
+            self.widgets['netsparker']['merge_template'].config(state=DISABLED)
+            self.widgets['netsparker']['merge_findinglist_template'].config(state=DISABLED)
+            self.inputs['netsparker']['merge']=False
+
+    def netsparkerResultOverwriteChanged(self):
+        if self.outputs['netsparker']['result_overwrite'].get() :
+            self.inputs['netsparker']['result_overwrite']=True
+        else:
+            self.inputs['netsparker']['result_overwrite']=False
 
 
     def setupNessusFrame(self):
@@ -436,6 +478,78 @@ class EHScripterApplication(Frame):
         Button(self.frameAcunetix, text="RUN", command=self.acunetixRun).grid(column=1, row=8, columnspan=6)
 
         #for child in self.frameAcunetix.winfo_children(): child.grid_configure(padx=5, pady=5)
+
+    def setupNetsparkerFrame(self):
+        self.frameNetsparker = Frame(self.notebook, padding="10 10 10 10")
+        Label(self.frameNetsparker, text="Input file or dir (*.netsparker):").grid(column=1, row=1, sticky=(E))
+        Label(self.frameNetsparker, text="Template:").grid(column=1, row=2, sticky=(E))
+        Label(self.frameNetsparker, text="Target, Vulnerability, Risk, VulnDesc, SubVulnerability, Link, ParamTable, findinglist", wraplength=300).grid(column=5, row=2, sticky=(N, W))
+        Label(self.frameNetsparker, text="Merge:").grid(column=1, row=3, sticky=(E))
+        Label(self.frameNetsparker, text="Merge Template:").grid(column=1, row=4, sticky=(E))
+        Label(self.frameNetsparker, text="Merge Items:").grid(column=4, row=4, sticky=(E))
+        Label(self.frameNetsparker, text="Output dir:").grid(column=1, row=6, sticky=(E))
+        Label(self.frameNetsparker, text="Overwrite results:").grid(column=1, row=7, sticky=(E))
+
+        self.addEntry(self.frameNetsparker, 'netsparker', 'load_file', 2, 1)
+        self.addEntry(self.frameNetsparker, 'netsparker', 'output_dir', 2, 6)
+
+        self.outputs['netsparker']['merge'] = BooleanVar()
+        self.outputs['netsparker']['merge'].set(self.inputs['netsparker']['merge'])
+        self.widgets['netsparker']['merge'] = Checkbutton(self.frameNetsparker, text='', command=self.netsparkerMergeChanged, variable=self.outputs['netsparker']['merge'], onvalue=True, offvalue=False)
+        self.widgets['netsparker']['merge'].grid(column=2, row=3, sticky=(W, E))
+
+        self.outputs['netsparker']['result_overwrite'] = BooleanVar()
+        self.outputs['netsparker']['result_overwrite'].set(self.inputs['netsparker']['result_overwrite'])
+        self.widgets['netsparker']['result_overwrite'] = Checkbutton(self.frameNetsparker, text='', command=self.netsparkerResultOverwriteChanged, variable=self.outputs['netsparker']['result_overwrite'], onvalue=True, offvalue=False)
+        self.widgets['netsparker']['result_overwrite'].grid(column=2, row=7, sticky=(W, E))
+
+        self.widgets['netsparker']['template'] = Text(self.frameNetsparker, width=40, height=10)
+        self.widgets['netsparker']['template'].insert(INSERT, self.inputs['netsparker']['template'])
+        self.widgets['netsparker']['template'].grid(column=2, row=2, sticky=(W, E, N, S))
+        self.widgets['netsparker']['template'].config(background='white')
+        scroll_template = Scrollbar(self.frameNetsparker, orient=VERTICAL, command=self.widgets['netsparker']['template'].yview)
+        scroll_template.grid(column=3, row=2, sticky=(N,S))
+        self.widgets['netsparker']['template']['yscrollcommand'] = scroll_template.set
+
+        #self.widgets['netsparker']['template'].pack(expand=YES, fill=BOTH)
+
+        self.widgets['netsparker']['merge_template'] = Text(self.frameNetsparker, width=40, height=10)
+        self.widgets['netsparker']['merge_template'].insert(INSERT, self.inputs['netsparker']['merge_template'])
+        self.widgets['netsparker']['merge_template'].grid(column=2, row=4, sticky=(W, E, N, S))
+        self.widgets['netsparker']['merge_template'].config(background='white')
+        scroll_merge_template = Scrollbar(self.frameNetsparker, orient=VERTICAL, command=self.widgets['netsparker']['merge_template'].yview)
+        scroll_merge_template.grid(column=3, row=4, sticky=(N,S))
+        self.widgets['netsparker']['merge_template']['yscrollcommand'] = scroll_merge_template.set
+        #self.widgets['netsparker']['merge_template'].pack(expand=YES, fill=BOTH)
+
+        self.widgets['netsparker']['merge_findinglist_template'] = Text(self.frameNetsparker, width=40, height=10)
+        self.widgets['netsparker']['merge_findinglist_template'].insert(INSERT, self.inputs['netsparker']['merge_findinglist_template'])
+        self.widgets['netsparker']['merge_findinglist_template'].grid(column=5, row=4, sticky=(W, E, N, S))
+        self.widgets['netsparker']['merge_findinglist_template'].config(background='white')
+        scroll_merge_findinglist_template = Scrollbar(self.frameNetsparker, orient=VERTICAL, command=self.widgets['netsparker']['merge_findinglist_template'].yview)
+        scroll_merge_findinglist_template.grid(column=6, row=4, sticky=(N,S))
+        self.widgets['netsparker']['merge_findinglist_template']['yscrollcommand'] = scroll_merge_findinglist_template.set
+        #self.widgets['netsparker']['merge_findinglist_template'].pack(expand=YES, fill=BOTH)
+
+        self.frameNetsparker.columnconfigure(1, weight=3, minsize=120)
+        self.frameNetsparker.columnconfigure(2, weight=3, minsize=120)
+        self.frameNetsparker.columnconfigure(3, weight=0, minsize=0)
+        self.frameNetsparker.columnconfigure(4, weight=3, minsize=120)
+        self.frameNetsparker.columnconfigure(5, weight=3, minsize=120)
+        self.frameNetsparker.columnconfigure(6, weight=0, minsize=0)
+        self.frameNetsparker.rowconfigure(1, weight=3, minsize=30)
+        self.frameNetsparker.rowconfigure(2, weight=3, minsize=30)
+        self.frameNetsparker.rowconfigure(3, weight=3, minsize=30)
+        self.frameNetsparker.rowconfigure(4, weight=3, minsize=30)
+        self.frameNetsparker.rowconfigure(5, weight=3, minsize=30)
+        self.frameNetsparker.rowconfigure(6, weight=3, minsize=30)
+        self.frameNetsparker.rowconfigure(7, weight=3, minsize=30)
+        self.frameNetsparker.rowconfigure(8, weight=3, minsize=30)
+        self.netsparkerMergeChanged()
+
+        Button(self.frameNetsparker, text="RUN", command=self.netsparkerRun).grid(column=1, row=8, columnspan=6)
+
+        #for child in self.frameNetsparker.winfo_children(): child.grid_configure(padx=5, pady=5)
 
     def setupDocxMacroFrame(self):
         self.frameDocxMacro = Frame(self.notebook, padding="10 10 10 10")
@@ -660,6 +774,7 @@ class EHScripterApplication(Frame):
         self.setupNessusFrame();
         self.setupBurpFrame();
         self.setupAcunetixFrame();
+        self.setupNetsparkerFrame();
         self.setupDocFrame();
         self.setupDocxMacroFrame();
         self.setupOdtMacroFrame();
@@ -670,6 +785,7 @@ class EHScripterApplication(Frame):
         self.notebook.add(self.frameNessus, text='Nessus')
         self.notebook.add(self.frameBurp, text='Burp')
         self.notebook.add(self.frameAcunetix, text='Acunetix')
+        self.notebook.add(self.frameNetsparker, text='Netsparker')
         self.notebook.add(self.frameDoc, text='DOC')
         self.notebook.add(self.frameDocxMacro, text='DOCX Macro')
         self.notebook.add(self.frameOdtMacro, text='ODT Macro')
