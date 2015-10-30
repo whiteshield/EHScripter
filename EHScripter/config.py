@@ -50,6 +50,8 @@ class DefaultConfig():
             inputs['doc']['company']='**Company Inc.**'
         if not inputs.get('doc').get('partner')  and inputs.get('doc').get('partner') != "":
             inputs['doc']['partner']='_Partner Inc._'
+        if not inputs.get('doc').get('filter')  and inputs.get('doc').get('filter') != "":
+            inputs['doc']['filter']=''
         if not inputs.get('doc').get('txt_pie')  and inputs.get('doc').get('txt_pie') != "":
             inputs['doc']['txt_pie']='Vulnerabilities'
         if not inputs.get('doc').get('txt_figure')  and inputs.get('doc').get('txt_figure') != "":

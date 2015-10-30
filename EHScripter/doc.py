@@ -88,7 +88,8 @@ class GenerateDoc:
 
 
         full = ''
-
+        filters=[x.strip() for x in self.options['filter'].split(',')]
+        print(filters)
         for name in os.listdir(self.options["load_dir"]) :
             name=self.options["load_dir"]+'/'+name
             if os.path.isdir(name) and os.path.isfile(name+'/document.md') :
@@ -269,7 +270,7 @@ class GenerateDoc:
 
         temp=string.Template(t)
 
-        d={'company':self.options['company'], 'partner':self.options['partner']}
+        d={'company':self.options['company'], 'partner':self.options['partner'], 'filter':self.options['filter']}
         text=t
         try:
             text=temp.substitute(d)
