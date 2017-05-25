@@ -89,14 +89,13 @@ class GenerateDoc:
 
         full = ''
         filters=[x.strip() for x in self.options['filter'].split(',')]
-        print(filters)
         for name in os.listdir(self.options["load_dir"]) :
             name=self.options["load_dir"]+'/'+name
-            if os.path.isdir(name) and os.path.isfile(name+'/document.md') :
+            if os.path.isfile(name) and name[-3:]=='.md' :
                 risklevelpiece=os.path.basename(name).split('-')[0]
                 if risklevelpiece in ['info','low', 'medium', 'high', 'critical']:
-                    doc=self.explode(name+'/document.md')
-                    vulns[risklevelpiece].append({'f': name+'/document.md', 't':doc.get('title', ''), 'd':name})
+                    doc=self.explode(name)
+                    vulns[risklevelpiece].append({'f': name, 't':doc.get('title', ''), 'd':self.options["load_dir"]})
                     cs=[i.strip() for i in doc.get('category', '').split(',')]
                     for c in cs:
                         if not c in categories:
@@ -106,10 +105,6 @@ class GenerateDoc:
                                 row[r]=0
                             matrix[c]=row
                         matrix[c][risks[risklevellistpositions[risklevelpiece]]]+=1
-                    if os.path.isdir(name+'/screenshots'):
-                        for s in os.listdir(name+'/screenshots'):
-                            if os.path.isfile(name+'/screenshots/'+s):
-                                shutil.copy(name+'/screenshots/'+s, self.options["load_dir"]+'/screenshots/'+s)
 
         t='\n\n'
         if self.options["matrix"] :
@@ -277,6 +272,8 @@ class GenerateDoc:
         except Exception as e:
             print('itt egy exception')
             print(e)
+            print(temp)
+            print(d)
 
         t=text
 

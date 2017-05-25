@@ -35,6 +35,8 @@ class NessusToMarkdown:
         findingsbyip={}
         findingsbyplugin={}
         risklevellistpositions={'info':4,'low':3,'medium':2,'high':1,'critical':0}
+        counters={'Info':0,'Low':0,'Medium':0,'High':0,'Critical':0}
+        sluggedcounter={}
         for processfile in filelist:
             tree = etree.parse(processfile)
             reporthosts=tree.xpath("//ReportHost")
@@ -59,7 +61,7 @@ class NessusToMarkdown:
                         description=self.value(reportitem.xpath('./description//text()'),'N/A')
                         plugin_output=self.value(reportitem.xpath('./plugin_output//text()'),'N/A')
                         if pluginFamily != 'Settings' and pluginName != '':
-                            d={'name':name, 'port':port, 'svc_name':svc_name, 'protocol':protocol, 'pluginName':pluginName, 'pluginFamily':pluginFamily, 'solution': solution, 'risk_factor': risk_factor, 'description': description, 'plugin_output': plugin_output, 'findinglist':'', 'cvss_base_score':cvss_base_score, 'cvss_vector':cvss_vector}
+                            d={'name':name, 'port':port, 'svc_name':svc_name, 'protocol':protocol, 'pluginName':pluginName, 'pluginFamily':pluginFamily, 'solution': solution, 'risk_factor': risk_factor, 'risk_factor_style': risk_factor.lower()+'Character', 'description': description, 'plugin_output': plugin_output, 'findinglist':'', 'cvss_base_score':cvss_base_score, 'cvss_vector':cvss_vector.replace('CVSS2#',''), 'slugscore':''}
                             if not self.options['merge']:
                                 dirname=slugify('%s-%s-%s-%04d-nessus'%(risk_factor, pluginName, name, counter))
                                 if not os.path.exists(self.options['output_dir']+'/'+dirname):
@@ -72,9 +74,21 @@ class NessusToMarkdown:
                                     tmpfile.write(text)
                                     tmpfile.close()
                             else :
+                                slugForMerge=slugify('%s-%s-nessus'%(risk_factor, pluginName))
+                                gotit=False
+                                if not findings.get(slugForMerge):
+                                    counters[risk_factor]=counters[risk_factor]+1;
+                                    sluggedcounter[slugForMerge]=counters[risk_factor]
                                 slug=slugify('%s-%s-nessus'%(risk_factor, pluginName))
-                                if not findings.get(slug):
-                                    findings[slug]=[]
+                                slug='s'+risk_factor[0:1]+str(sluggedcounter[slugForMerge]).zfill(3)
+                                slug=slug.lower();
+                                pluginNameHeader=slug.upper()+" - "+pluginName
+                                d['pluginName']=pluginName
+                                d['pluginNameHeader']=pluginNameHeader
+                                d['slugscore']=slug+'_score.png'
+                                d['slug']=slug
+                                if not findings.get(slugForMerge):
+                                    findings[slugForMerge]=[]
                                 m = re.match("^\d+\.\d+\.\d+\.\d+$", name)
                                 if m:
                                     nameip="%03d.%03d.%03d.%03d" % tuple(int(ippart) for ippart in name.split("."))
@@ -86,12 +100,11 @@ class NessusToMarkdown:
                                 slugbyplugin=slugify('%d-%s-%s-%05d-%s'%(risklevellistpositions[risk_factor.lower()], pluginName, nameip, int(port), protocol))
                                 if not findingsbyplugin.get(slugbyplugin):
                                     findingsbyplugin[slugbyplugin]={'name':name, 'port':port, 'protocol':protocol, 'pluginName':pluginName, 'risk_factor':risk_factor}
-                                gotit=False
-                                for dinfindings in findings[slug]:
+                                for dinfindings in findings[slugForMerge]:
                                     if d['name'] == dinfindings['name'] and d['port'] == dinfindings['port'] and d['svc_name'] == dinfindings['svc_name'] and d['protocol'] == dinfindings['protocol'] and d['risk_factor'] == dinfindings['risk_factor'] and d['description'] == dinfindings['description'] and d['plugin_output'] == dinfindings['plugin_output']:
                                         gotit=True
                                 if not gotit:
-                                    findings[slug].append(d)
+                                    findings[slugForMerge].append(d)
                                     pass
         sumtextbyip="ip;plugin;port;protocol;risk\n"
         sumtexttemplatebyip=string.Template("$name;$pluginName;$port;$protocol;$risk_factor")
@@ -101,7 +114,6 @@ class NessusToMarkdown:
         tmpfile = open(self.options['output_dir']+'/sumbyip.csv', 'w');
         tmpfile.write(sumtextbyip)
         tmpfile.close()
-
         sumtextbyplugin="risk;plugin;ip;port;protocol\n"
         sumtexttemplatebyplugin=string.Template("$risk_factor;$pluginName;$name;$port;$protocol")
         for key  in sorted(findingsbyplugin.keys()):
@@ -120,13 +132,12 @@ class NessusToMarkdown:
                 text=temp.substitute(d)
                 findinglist+=text+"\n\n"
             d['findinglist']=findinglist
-            dirname=key
-            if not os.path.exists(self.options['output_dir']+'/'+dirname):
-                os.makedirs(self.options['output_dir']+'/'+dirname)
+            filename=key+".md";
+            filename=d['slug']+".md";
             temp=self.template
             text=temp.substitute(d)
-            if self.options['result_overwrite'] or (not os.path.exists(self.options['output_dir']+'/'+dirname+'/document.md')):
-                tmpfile = open(self.options['output_dir']+'/'+dirname+'/document.md', 'w');
+            if self.options['result_overwrite'] or (not os.path.exists(self.options['output_dir']+'/'+filename)):
+                tmpfile = open(self.options['output_dir']+'/'+filename, 'w');
                 tmpfile.write(text)
                 tmpfile.close()
 

@@ -103,13 +103,11 @@ class NetsparkerToMarkdown:
                 text=temp.substitute(d)
                 findinglist+=text+"\n\n"
             d['findinglist']=findinglist
-            dirname=key
-            if not os.path.exists(self.options['output_dir']+'/'+dirname):
-                os.makedirs(self.options['output_dir']+'/'+dirname)
+            filename=key+".md";
             temp=self.template
             text=temp.substitute(d)
-            if self.options['result_overwrite'] or (not os.path.exists(self.options['output_dir']+'/'+dirname+'/document.md')):
-                tmpfile = open(self.options['output_dir']+'/'+dirname+'/document.md', 'w');
+            if self.options['result_overwrite'] or (not os.path.exists(self.options['output_dir']+'/'+filename)):
+                tmpfile = open(self.options['output_dir']+'/'+filename, 'w');
                 tmpfile.write(text)
                 tmpfile.close()
 
