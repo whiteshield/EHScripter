@@ -132,8 +132,10 @@ class NessusToMarkdown:
                 text=temp.substitute(d)
                 findinglist+=text+"\n\n"
             d['findinglist']=findinglist
-            filename=key+".md";
-            filename=d['slug']+".md";
+            if self.options['counter_filename']:
+                filename=d['slug']+".md";
+            else:
+                filename=key+".md";
             temp=self.template
             text=temp.substitute(d)
             if self.options['result_overwrite'] or (not os.path.exists(self.options['output_dir']+'/'+filename)):

@@ -100,6 +100,8 @@ class DefaultConfig():
             inputs['nessus']['merge']=True
         if not inputs.get('nessus').get('result_overwrite') and not inputs.get('nessus').get('result_overwrite')==False:
             inputs['nessus']['result_overwrite']=True
+        if not inputs.get('nessus').get('counter_filename') and not inputs.get('nessus').get('counter_filename')==False:
+            inputs['nessus']['counter_filename']=True
         if not inputs.get('nessus').get('output_dir')  and inputs.get('nessus').get('output_dir') != "":
             inputs['nessus']['output_dir']='/projects/test/findings/nessus'
         if not inputs.get('nessus').get('merge_template')  and inputs.get('nessus').get('merge_template') != "":

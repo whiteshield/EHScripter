@@ -158,6 +158,12 @@ class EHScripterApplication(Frame):
         else:
             self.inputs['nessus']['result_overwrite']=False
 
+    def nessusCounterFilenameChanged(self):
+        if self.outputs['nessus']['counter_filename'].get() :
+            self.inputs['nessus']['counter_filename']=True
+        else:
+            self.inputs['nessus']['counter_filename']=False
+
     def burpRun(self):
         self.readOutput()
         letsgo=True
@@ -273,6 +279,7 @@ class EHScripterApplication(Frame):
         Label(self.frameNessus, text="Merge Items:").grid(column=4, row=4, sticky=(E))
         Label(self.frameNessus, text="Output dir:").grid(column=1, row=6, sticky=(E))
         Label(self.frameNessus, text="Overwrite results:").grid(column=1, row=7, sticky=(E))
+        Label(self.frameNessus, text="Counter in filename:").grid(column=1, row=8, sticky=(E))
 
         self.addEntry(self.frameNessus, 'nessus', 'load_file', 2, 1)
         self.addEntry(self.frameNessus, 'nessus', 'output_dir', 2, 6)
@@ -286,6 +293,11 @@ class EHScripterApplication(Frame):
         self.outputs['nessus']['result_overwrite'].set(self.inputs['nessus']['result_overwrite'])
         self.widgets['nessus']['result_overwrite'] = Checkbutton(self.frameNessus, text='', command=self.nessusResultOverwriteChanged, variable=self.outputs['nessus']['result_overwrite'], onvalue=True, offvalue=False)
         self.widgets['nessus']['result_overwrite'].grid(column=2, row=7, sticky=(W, E))
+
+        self.outputs['nessus']['counter_filename'] = BooleanVar()
+        self.outputs['nessus']['counter_filename'].set(self.inputs['nessus']['counter_filename'])
+        self.widgets['nessus']['counter_filename'] = Checkbutton(self.frameNessus, text='', command=self.nessusCounterFilenameChanged, variable=self.outputs['nessus']['counter_filename'], onvalue=True, offvalue=False)
+        self.widgets['nessus']['counter_filename'].grid(column=2, row=8, sticky=(W, E))
 
         self.widgets['nessus']['template'] = Text(self.frameNessus, width=40, height=10)
         self.widgets['nessus']['template'].insert(INSERT, self.inputs['nessus']['template'])
@@ -330,7 +342,7 @@ class EHScripterApplication(Frame):
 
         self.nessusMergeChanged()
 
-        Button(self.frameNessus, text="RUN", command=self.nessusRun).grid(column=1, row=8, columnspan=6)
+        Button(self.frameNessus, text="RUN", command=self.nessusRun).grid(column=1, row=9, columnspan=6)
 
         #for child in self.frameNessus.winfo_children(): child.grid_configure(padx=5, pady=5)
 
