@@ -34,6 +34,8 @@ Output formats:
 
 #ChangeLog
 
+- v0.7 - Changed output format from directories to files and added new file naming convention to Nessus tab
+
 - v0.6 - Netsparker support added (detailed html reports renamed to *.netsparker)
 
 - v0.5 - Small improvements
